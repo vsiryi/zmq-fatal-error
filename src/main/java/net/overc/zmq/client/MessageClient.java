@@ -14,6 +14,10 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * Client part that implemented based on DEALER socket.
+ * - Make 'pong' response message based on 'ping' message from server.
+ * - Read 'event' message
+ *
  * Date: 5/31/18
  *
  * @author Vitalii Siryi
@@ -141,8 +145,8 @@ public class MessageClient {
 
                 if(RouterTopic.P.equals(topic)){
                     send(RouterTopic.P, PongMessageBean.build(userId).toJson());
-                } else if(RouterTopic.C.equals(topic)){
-                    commands.add(message);
+                } else if(RouterTopic.E.equals(topic)){
+                    //ignore
                 }
             }
         }
@@ -176,14 +180,6 @@ public class MessageClient {
     private static void setId(ZMQ.Socket sock) {
         String identity = String.format("Z-%04X-%04X", rand.nextInt(), rand.nextInt());
         sock.setIdentity(identity.getBytes(ZMQ.CHARSET));
-    }
-
-    public String pollCommand(int waitSeconds) throws Exception {
-        return commands.poll(waitSeconds, TimeUnit.SECONDS);
-    }
-
-    public void clear(){
-        commands.clear();
     }
 
 }

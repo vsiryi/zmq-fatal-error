@@ -7,7 +7,6 @@ import net.overc.zmq.monitor.ConnectionMonitor;
 import org.apache.commons.lang.StringUtils;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
-import org.zeromq.ZMonitor;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -15,6 +14,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * Use ROUTER socket for bi-direction messaging with clients. net.overc.zmq.server.MessageServer abstraction is used to perform the work
+ *
  * Date: 5/30/18
  *
  * @author Vitalii Siryi
@@ -49,7 +50,7 @@ public class BiDirectionMessageServer {
         this.secretKey = secretKey;
     }
 
-    public void register(MessageServer server){
+    void register(MessageServer server) {
         this.servers.add(server);
     }
 
@@ -57,7 +58,7 @@ public class BiDirectionMessageServer {
         this.broker = this.context.createSocket(ZMQ.ROUTER);
         monitor.startup(this.context, this.broker);
 
-        broker.setAsServerCurve(true);
+        broker.setCurveServer(true);
         broker.setCurvePublicKey(publicKey.getBytes());
         broker.setCurveSecretKey(secretKey.getBytes());
 
@@ -93,7 +94,7 @@ public class BiDirectionMessageServer {
         servers.forEach(it -> it.startup(pushQueue));
     }
 
-    public void shutdown() {
+    void shutdown() {
         stop.set(true);
         monitor.shutdown();
         try {
@@ -145,8 +146,8 @@ public class BiDirectionMessageServer {
 
     }
 
-    public void process(AsyncMessage message) {
-        if(message == null || !message.validate()){
+    private void process(AsyncMessage message) {
+        if (message == null || !message.validate()) {
             return;
         }
 

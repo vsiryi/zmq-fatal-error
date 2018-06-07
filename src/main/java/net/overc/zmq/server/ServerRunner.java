@@ -28,6 +28,7 @@ public class ServerRunner {
     private EventServer eventServer = new EventServer();
 
     public void startup() {
+        //start ROUTER socket
         server = new BiDirectionMessageServer(
                 SERVER_IP,
                 SERVER_PORT,
@@ -35,6 +36,7 @@ public class ServerRunner {
                 SecurityKeys.get().getSecretKey()
         );
 
+        //register heartbeat service
         server.register(
                 new HeartBeatServer(
                         new LoggedSessionListener(identities),
@@ -42,10 +44,12 @@ public class ServerRunner {
                         BEAT_INTERVAL)
         );
 
+        //register service for sending events to clients
         server.register(eventServer);
 
         server.startup();
 
+        //this part of code produce high loading to the socket connection
         executor.execute(() -> {
             while (!stop.get()) {
                 identities.forEach(it ->{

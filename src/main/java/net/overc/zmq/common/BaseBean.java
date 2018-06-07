@@ -24,26 +24,13 @@ public class BaseBean implements Serializable {
         return gson.fromJson(json, clazz);
     }
 
-    public String print(){
-        return getPrint().toJson(this);
-    }
-
     private static Gson gson;
-
-    private static Gson prettyPrinting;
 
     private static Gson get(){
         if (gson == null) {
             gson = new GsonBuilder().setDateFormat(ISO_DATE_FORMAT).create();
         }
         return gson;
-    }
-
-    private static Gson getPrint(){
-        if (prettyPrinting == null) {
-            prettyPrinting = new GsonBuilder().setDateFormat(ISO_DATE_FORMAT).setPrettyPrinting().create();
-        }
-        return prettyPrinting;
     }
 
 }

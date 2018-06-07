@@ -9,8 +9,6 @@ public enum RouterTopic {
 
     I, //init
     P,  //pong
-    A, //acknowledge
-    C, //command
     E; //event
 
     public static RouterTopic from(String value){

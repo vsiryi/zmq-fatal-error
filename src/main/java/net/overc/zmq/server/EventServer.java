@@ -8,6 +8,8 @@ import org.zeromq.ZMQ;
 import java.util.Set;
 
 /**
+ * This implementation allow to send message (event) to a connection with necessary identity
+ *
  * Date: 5/31/18
  *
  * @author Vitalii Siryi
@@ -35,6 +37,6 @@ public class EventServer extends BaseMessageServer {
     }
 
     public void send(String identity, String uuid) {
-        send(identity, RouterTopic.C, uuid);
+        send(identity, RouterTopic.E, uuid);
     }
 }

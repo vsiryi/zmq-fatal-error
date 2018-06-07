@@ -14,6 +14,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Heartbeat server track  online users and map connection identity with user id
+ *
  * Date: 5/30/18
  *
  * @author Vitalii Siryi
@@ -77,6 +79,7 @@ public class HeartBeatServer extends BaseMessageServer {
     }
 
     private void tick() {
+        //send ping message for each client
         workers.keySet().forEach(it -> {
             send(it, RouterTopic.P, String.valueOf(System.currentTimeMillis()));
         });

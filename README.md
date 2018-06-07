@@ -1,5 +1,9 @@
-# zmq-fatal-error
-Small project for reproduce JeroMQ fatal error
+# Goal
+Reproduce JeroMQ issue that happens on high loaded ROUTER/DEALER connection.
+
+# Description
+Example of an application that track online users (clients, that connected to the server) and send some events from server to client (directly for each client). 
+This is an application for reproduce JeroMQ fatal error.
 
 Use net.overc.zmq.ReproduceFatalException for reproduce. Exception happens 1 time from 3 runs:
 
@@ -39,3 +43,17 @@ Another exception that can be caught by this example (but rarely):
 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
 	at java.lang.Thread.run(Thread.java:745)`
+	
+# Implementation details
+
+Server:
+net.overc.zmq.server.BiDirectionMessageServer use ROUTER socket for bi-direction messaging with clients.
+net.overc.zmq.server.HeartBeatServer track online users and map connection identity with user id.
+net.overc.zmq.server.EventServer allow to send message (event) to a connection with necessary identity.
+net.overc.zmq.server.ServerRunner helper class for server start simplification.
+
+Client:
+net.overc.zmq.client.MessageClient client part implementation based on DEALER socket. Responsibilities:
+    - Make 'pong' response message based on 'ping' message from server.
+    - Read 'event' message.
+

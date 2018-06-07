@@ -1,7 +1,5 @@
 package net.overc.zmq.server;
 
-import zmq.io.mechanism.curve.Curve;
-
 /**
  * Date: 5/30/18
  *
@@ -15,22 +13,8 @@ public class SecurityKeys {
 
     private String secretKey = "<Yj-AqI*bD.KarpHs9PHgxwpHK+x/N?WMm}9e{{F";
 
-    /*public SecurityKeys() {
-        prepareCurveKeys();
-
-        System.out.println("publicKey["+publicKey+"]");
-        System.out.println("secretKey["+secretKey+"]");
-    }*/
-
     public static SecurityKeys get(){
         return keys;
-    }
-
-    private void prepareCurveKeys() {
-        Curve curve = new Curve();
-        String[] serverKeys = curve.keypairZ85();
-        this.publicKey = serverKeys[0];
-        this.secretKey = serverKeys[1];
     }
 
     public String getPublicKey() {
