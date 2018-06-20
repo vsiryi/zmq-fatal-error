@@ -26,16 +26,6 @@ public class EventServer extends BaseMessageServer {
         //do not handle messages
     }
 
-    @Override
-    public void startup(ZMQ.Socket queue) {
-        this.queue = queue;
-    }
-
-    @Override
-    public void shutdown() {
-        //nothing
-    }
-
     public void send(String identity, String uuid) {
         send(identity, RouterTopic.E, uuid);
     }

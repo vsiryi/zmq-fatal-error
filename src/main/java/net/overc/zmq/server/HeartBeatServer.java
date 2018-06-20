@@ -9,6 +9,7 @@ import org.zeromq.ZMQ;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -38,8 +39,10 @@ public class HeartBeatServer extends BaseMessageServer {
         this.beatInterval = beatInterval;
     }
 
-    public void startup(ZMQ.Socket queue) {
-        this.queue = queue;
+    @Override
+    public void startup(BlockingQueue<String> queue) {
+        super.startup(queue);
+
         timer = Executors.newSingleThreadScheduledExecutor();
         timer.scheduleWithFixedDelay(() -> {
             try {

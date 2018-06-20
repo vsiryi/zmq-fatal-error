@@ -9,8 +9,7 @@ import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -26,6 +25,7 @@ public class BiDirectionMessageServer {
     private final ZContext context;
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExecutorService outputExecutor = Executors.newSingleThreadExecutor();
 
     private AtomicBoolean stop = new AtomicBoolean(false);
 
@@ -41,6 +41,7 @@ public class BiDirectionMessageServer {
 
     private List<MessageServer> servers = Lists.newArrayList();
     private ConnectionMonitor monitor = new ConnectionMonitor();
+    private BlockingQueue<String> output = new LinkedBlockingQueue<>();
 
     public BiDirectionMessageServer(String internalIp, int serverPort, String publicKey, String secretKey) {
         this.context = new ZContext();
@@ -91,7 +92,20 @@ public class BiDirectionMessageServer {
             }
         });
 
-        servers.forEach(it -> it.startup(pushQueue));
+        outputExecutor.execute(()->{
+            while (!stop.get()) {
+                try {
+                    String message = output.poll(500, TimeUnit.MILLISECONDS);
+                    if(message != null){
+                        pushQueue.send(message, 0);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        servers.forEach(it -> it.startup(output));
     }
 
     void shutdown() {
@@ -107,6 +121,7 @@ public class BiDirectionMessageServer {
         this.poller.unregister(this.pullQueue);
 
         executor.shutdown();
+        outputExecutor.shutdown();
 
         broker.close();
         pullQueue.close();

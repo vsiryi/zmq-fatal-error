@@ -20,10 +20,10 @@ public class ReproduceFatalException {
         Thread.sleep(2000);
 
         //run 15 clients in a loop
-        for(int i = 0; i < 15; i++){
+        for(int i = 0; i < 25; i++){
             MessageClient client = new MessageClient(i);
             client.startup();
-            Thread.sleep(1000);
+            Thread.sleep(500);
         }
 
         Thread.sleep(5000);

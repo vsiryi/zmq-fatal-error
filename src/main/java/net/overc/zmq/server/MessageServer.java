@@ -3,6 +3,8 @@ package net.overc.zmq.server;
 import net.overc.zmq.common.AsyncMessage;
 import org.zeromq.ZMQ;
 
+import java.util.concurrent.BlockingQueue;
+
 /**
  * Date: 5/30/18
  *
@@ -14,7 +16,7 @@ public interface MessageServer {
 
     void onMessage(AsyncMessage message);
 
-    void startup(ZMQ.Socket queue);
+    void startup(BlockingQueue<String> queue);
 
     void shutdown();
 
